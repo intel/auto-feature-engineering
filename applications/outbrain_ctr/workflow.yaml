@@ -1,0 +1,11 @@
+dataset_path_dict:
+  clicks: ./raw_data/clicks_train.csv
+  documents_categories: ./raw_data/documents_categories.csv
+  documents_entities: ./raw_data/documents_entities.csv
+  documents_meta: ./raw_data/documents_meta.csv
+  documents_topics: ./raw_data/documents_topics.csv
+  events: ./raw_data/events.csv
+  page_views: ./raw_data/page_views_sample.csv
+  promoted_content: ./raw_data/promoted_content.csv
+target_label: clicked
+engine_type: spark

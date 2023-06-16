@@ -1,0 +1,3 @@
+dataset_path: ./raw_data/train.csv
+target_label: fare_amount
+engine_type: spark
