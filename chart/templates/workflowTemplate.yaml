@@ -1,0 +1,85 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: {{ .Values.metadata.name }}
+spec:
+  templates:
+    - name: main
+      dag:
+        tasks:
+          - name: autofe
+            template: autofe-template
+            arguments:
+              parameters:
+                - name: application
+                  value: '{{ .Values.dataset.application }}'
+        failFast: true
+    - name: autofe-template
+      inputs:
+        parameters:
+          - name: application
+      container:
+        image: '{{ .Values.image.name }}'
+        command:
+          - /bin/bash
+        args:
+          - "-c"
+          - "python -u $APP_DIR/src/run_workflow.py"
+        env:
+          - name: http_proxy
+            value: '{{"{{workflow.parameters.http_proxy}}"}}'
+          - name: https_proxy
+            value: '{{"{{workflow.parameters.http_proxy}}"}}'
+          - name: APP_DIR
+            value:  '/home/vmagent/app/'
+        resources:
+          requests:
+            memory: "200Gi"
+        workingDir:  '/home/vmagent/app/'
+        volumeMounts:
+          - name: dshm
+            mountPath: /dev/shm
+        {{ if eq .Values.dataset.type "local" }}
+          - name: project-repo
+            mountPath: /home/vmagent/app/
+          - name: workspace
+            mountPath: /home/vmagent/app/workspace/
+        {{ end }}
+        {{ if eq .Values.dataset.type "nfs" }}
+          - name: project-repo
+            mountPath: /home/vmagent/app/
+            subPath: {{ .Values.dataset.nfs.repo_path }}
+          - name: workspace
+            mountPath: /home/vmagent/app/workspace/
+            subPath: '{{ .Values.dataset.nfs.repo_path }}/applications/{{"{{ inputs.parameters.application }}"}}'
+        {{ end }}
+        imagePullPolicy: Always
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+        {{ if eq .Values.dataset.type "local" }}
+      - name: project-repo
+        hostPath:
+          path: {{ .Values.dataset.local.repo_path }}
+      - name: workspace
+        hostPath:
+          path: '{{ .Values.dataset.local.repo_path }}/applications/{{"{{ inputs.parameters.application }}"}}'
+        {{ end }}
+        {{ if eq .Values.dataset.type "nfs" }}
+      - name: project-repo
+        nfs: 
+          server: {{ .Values.dataset.nfs.server }}
+          path: {{ .Values.dataset.nfs.path }}
+          readOnly: false
+      - name: workspace
+        nfs:
+          server: {{ .Values.dataset.nfs.server }}
+          path: {{ .Values.dataset.nfs.path }}
+          readOnly: false
+        {{ end }}
+        entrypoint: main
+  arguments:
+    parameters:
+      - name: http_proxy
+        value: {{ .Values.proxy }}

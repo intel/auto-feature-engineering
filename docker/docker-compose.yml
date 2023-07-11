@@ -1,0 +1,113 @@
+networks: 
+  autofe_workflow:
+    external: true
+services:
+  autofe-local-mode:
+    build:
+      args: 
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+      dockerfile: Dockerfile-recdp
+      context: ./
+    command: 
+      - /bin/bash
+      - -c
+      - |
+        python -u $$APP_DIR/src/run_workflow.py
+    container_name: autofe_pyrecdp
+    network_mode: "host"
+    environment:
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
+      - APP_DIR=/home/vmagent/app/
+    image: intel/ai-workflows:pa-autofe
+    privileged: true
+    devices:
+      - /dev/dri
+    volumes: 
+      - ${AUTOFE_WORKSPACE:-$AUTOFE_DIR/applications/nyc_taxi_fare}:/home/vmagent/app/workspace/
+      - ../:/home/vmagent/app/
+    working_dir: /home/vmagent/app/
+    shm_size: 300g
+  autofe-EDA-UI:
+    build:
+      args: 
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+      dockerfile: Dockerfile-recdp
+      context: ./
+    command:
+      - /bin/bash
+      - -c
+      - |
+        jupyter notebook --allow-root --ip 0.0.0.0 --NotebookApp.token='' --NotebookApp.password='' --notebook-dir /home/vmagent/app/workspace/
+    container_name: autofe_EDA_UI
+    network_mode: "host"
+    environment:
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
+      - APP_DIR=/home/vmagent/app/
+    image: intel/ai-workflows:pa-autofe
+    privileged: true
+    devices:
+      - /dev/dri
+    volumes: 
+      - ${AUTOFE_WORKSPACE:-$AUTOFE_DIR/applications/nyc_taxi_fare}:/home/vmagent/app/workspace/
+      - ../:/home/vmagent/app/
+    working_dir: /home/vmagent/app/
+    shm_size: 300g
+  autofe-notebook-UI:
+    build:
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+      dockerfile: Dockerfile-recdp
+      context: ./
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python -u $$APP_DIR/src/prepare_env.py &
+        jupyter lab --allow-root --ip 0.0.0.0 --NotebookApp.token='' --NotebookApp.password='' --notebook-dir /home/vmagent/app/workspace/
+    container_name: autofe_notebook_UI
+    network_mode: "host"
+    environment:
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
+      - APP_DIR=/home/vmagent/app/
+    image: intel/ai-workflows:pa-autofe
+    privileged: true
+    devices:
+      - /dev/dri
+    volumes: 
+      - ${AUTOFE_WORKSPACE:-$AUTOFE_DIR/applications/nyc_taxi_fare}:/home/vmagent/app/workspace/
+      - ../:/home/vmagent/app/
+    working_dir: /home/vmagent/app/
+    shm_size: 300g
+  autofe-notebook-dev:
+    build:
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+      dockerfile: Dockerfile-recdp
+      context: ./
+    command:
+      - /bin/bash
+      - -c
+      - |
+        jupyter lab --allow-root --ip 0.0.0.0 --NotebookApp.token='' --NotebookApp.password='' --notebook-dir /home/vmagent/app/workspace/
+    container_name: autofe_dev
+    network_mode: "host"
+    environment:
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
+      - APP_DIR=/home/vmagent/app/
+    image: intel/ai-workflows:pa-autofe
+    privileged: true
+    devices:
+      - /dev/dri
+    volumes: 
+      - ${AUTOFE_WORKSPACE:-$AUTOFE_DIR/applications/nyc_taxi_fare}:/home/vmagent/app/workspace/
+      - ../:/home/vmagent/app/
+    working_dir: /home/vmagent/app/
+    shm_size: 300g

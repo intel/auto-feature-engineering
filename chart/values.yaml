@@ -1,0 +1,15 @@
+metadata:
+  name: auto-feature-engineering
+proxy: nil
+image:
+  name: 'intel/ai-workflows:pa-autofe'
+dataset:
+  type: <nfs/local>
+  local:
+    repo_path: nil
+  nfs:
+    server: nil
+    path: nil
+    repo_path: nil
+  application: nyc_taxi_fare
+
