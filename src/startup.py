@@ -6,7 +6,7 @@ from pyrecdp.core.utils import Timer
 import pandas as pd
 import yaml
 
-def get_load_function(dataset, lazy_load):
+def get_load_function(dataset, lazy_load, label=None):
     data_type = None
     if os.path.isdir(dataset):
         input_files = sorted(os.listdir(dataset))
@@ -25,7 +25,11 @@ def get_load_function(dataset, lazy_load):
             data_type = 'parquet'
         elif dataset.endswith("tsv"):
             data_type = 'tsv'
-            
+    
+    if label == 'fare_amount':
+        def load_data(nrows = -1):
+            return load_nyc_to_pandasdf(dataset, nrows=nrows, lazy_load=lazy_load)
+        return load_data
     if data_type == 'csv':
         def load_data(nrows = -1):
             return load_csv_to_pandasdf(dataset, nrows=nrows, lazy_load=lazy_load)
@@ -75,6 +79,20 @@ def load_csv_to_pandasdf(dataset, nrows=-1, lazy_load=False):
                 df = pd.read_csv(dataset)
     return df
 
+def load_nyc_to_pandasdf(dataset, nrows=-1, lazy_load=False):
+    cols = [
+        'fare_amount', 'pickup_datetime','pickup_longitude', 'pickup_latitude',
+        'dropoff_longitude', 'dropoff_latitude', 'passenger_count'
+    ]
+    with Timer(f"Read {dataset}"):
+        if nrows != -1:
+            df = pd.read_csv(dataset, usecols=cols, nrows = nrows)
+        else:
+            df = pd.read_csv(dataset, usecols=cols)
+    with Timer(f"clean {dataset}"):
+        df = clean_df(df)
+    return df
+
 def load_parquet_to_pandasdf(dataset, nrows=-1, lazy_load=False):
     if os.path.isdir(dataset):
         input_files = sorted(os.listdir(dataset))
@@ -117,6 +135,24 @@ def load_tsv_to_pandasdf(dataset, nrows=-1, lazy_load=False):
             df = pd.read_table(dataset, on_bad_lines="skip")
     return df
 
+def cutomizedCoordinationFix(df):
+    df = df.assign(rev=df.dropoff_latitude<df.dropoff_longitude)
+    idx = (df['rev'] == 1)
+    df.loc[idx,['dropoff_longitude','dropoff_latitude']] = df.loc[idx,['dropoff_latitude','dropoff_longitude']].values
+    df.loc[idx,['pickup_longitude','pickup_latitude']] = df.loc[idx,['pickup_latitude','pickup_longitude']].values
+    df = df.drop(columns=['rev'])
+    return df
+
+#NYC taxi fare specific dataset cleaning function
+def clean_df(df):    
+    #reverse incorrectly assigned longitude/latitude values
+    df = cutomizedCoordinationFix(df)
+    df = df[(df.fare_amount > 0)  & (df.fare_amount <= 500) &
+          (df.passenger_count >= 0) & (df.passenger_count <= 8)  &
+           ((df.pickup_longitude != 0) & (df.pickup_latitude != 0) & (df.dropoff_longitude != 0) & (df.dropoff_latitude != 0) )]
+    
+    return df
+
 # *** Prepare ***
 import pandas as pd
 pd.set_option('display.max_rows', 500)
@@ -132,7 +168,7 @@ if 'lazy_load' not in settings:
 print(f"Configuration is {settings}")
 print("start up executed")
 if 'dataset_path' in settings:
-    load_data = get_load_function(os.path.join(workspace, settings['dataset_path']), settings['lazy_load'])
+    load_data = get_load_function(os.path.join(workspace, settings['dataset_path']), settings['lazy_load'], settings['target_label'])
 elif 'dataset_path_dict' in settings:
     load_data = get_load_dict_function(settings['dataset_path_dict'], settings['lazy_load'])
 else:

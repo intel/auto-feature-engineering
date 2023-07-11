@@ -67,21 +67,21 @@ Steps explained:
 1. Download suggested dataset. (Skip if you want to use own dataset).
 2. Create a folder in applications and put the dataset there.
 3. Create a workflow yaml file in {your folder} to config dataset_path and label.
-4. run "make workspace=`pwd`/applications/{your folder}/ autofe-local-workflow" (cmdline mode) or run "make workspace=`pwd`/applications/{your folder}/ autofe-notebook-UI" (jupyter notebook mode).
+4. run "docker compose run autofe-local-mode" (cmdline mode) or run "docker compose run autofe-notebook-UI" (jupyter notebook mode).
 5. Once the script completes successfully, you'll see transformed data and EDA analysis in {your folder}. 
 
 Following steps is a auto feature engineering example on [NYC taxi dataset](https://www.kaggle.com/competitions/new-york-city-taxi-fare-prediction/data).
 
-### 1. Download the Workflow Repository
+### Download the Workflow Repository
 
 Create a working directory for workflow and clone workflow repo into working directory.
 ```
 mkdir -p $WORKSPACE && cd $WORKSPACE
-git clone https://github.com/intel-sandbox/applications.ai.frameworks.workflow.autofe.git
-export AUTOFE_WORKSPACE=`pwd`/applications.ai.frameworks.workflow.autofe
+git clone https://github.com/intel/auto-feature-engineering.git
+export AUTOFE_DIR=`pwd`/auto-feature-engineering
 ```
 
-### 2. Download the Dataset
+### Download the Dataset
 
 The examples uses [kaggle API](https://github.com/Kaggle/kaggle-api) to download dataset, you can also download [dataset](https://www.kaggle.com/competitions/new-york-city-taxi-fare-prediction/data) manually. 
 ```
@@ -93,52 +93,92 @@ export KAGGLE_KEY=${your_kaggle_key}
 export KAGGLE_PROXY=${your_proxy}
 
 # download NYC taxi dataset, usually took ~2 mins
-cd ${AUTOFE_WORKSPACE}/applications/nyc_taxi_fare/; mkdir -p raw_data; cd raw_data;
+cd ${AUTOFE_DIR}/applications/nyc_taxi_fare/; mkdir -p raw_data; cd raw_data;
 kaggle competitions download -c new-york-city-taxi-fare-prediction; unzip new-york-city-taxi-fare-prediction.zip
 ```
 
-### 3. Run Workflow
+## Supported Runtime Environment
+You can execute the references pipelines using the following environments:
+* Docker
+* Argo
+* Jupyter
 
-This command will build RecDP docker image and starts docker container. $workspace directory will be mounted to docker container and corresponding workflow will be launched in container. When the command completes successfully, a `EDA` folder will be created under $workspace folder, containing transformed dataset and `pipeline.json` file that contains feature transform pipeline created by RecDP.
+### Run Using Docker
+Follow these instructions to set up and run our provided Docker image.
+
+#### Set Up Docker Engine
+You'll need to install Docker Engine on your development system. Note that while **Docker Engine** is free to use, **Docker Desktop** may require you to purchase a license.  See the [Docker Engine Server installation instructions](https://docs.docker.com/engine/install/#server) for details.
+
+If the Docker image is run on a cloud service, you may also need credentials to perform training and inference related operations (such as these
+for Azure):
+- [Set up the Azure Machine Learning Account](https://azure.microsoft.com/en-us/free/machine-learning)
+- [Configure the Azure credentials using the Command-Line Interface](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli)
+- [Compute targets in Azure Machine Learning](https://learn.microsoft.com/en-us/azure/machine-learning/concept-compute-target)
+- [Virtual Machine Products Available in Your Region](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=virtual-machines&regions=us-east)
+
+#### Setup Docker Compose
+Ensure you have Docker Compose installed on your machine. If you don't have this tool installed, consult the official [Docker Compose installation documentation](https://docs.docker.com/compose/install/linux/#install-the-plugin-manually).
+
+```bash
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+mkdir -p $DOCKER_CONFIG/cli-plugins
+curl -SL https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+docker compose version
+```
+
+#### Set Up Docker Image
+Build or pull the provided docker image.
+
+```bash 
+cd $AUTOFE_DIR/docker
+docker compose build
+```
+Or
+```bash
+docker pull intel/ai-workflows:pa-autofe
+```
+
+#### Run Pipeline with Docker Compose 
+This command will build RecDP docker image and starts docker container. `$AUTOFE_WORKSPACE` directory will be mounted to docker container and corresponding workflow will be launched in container. When the command completes successfully, a `EDA` folder will be created under $workspace folder, containing transformed dataset and `pipeline.json` file that contains feature transform pipeline created by RecDP.
 > Note: We use system proxy from host while building docker image, so please set correct environment param for `http_proxy` and `https_proxy` in host.
 
-Configuration for ${AUTOFE_WORKSPACE}/applications/nyc_taxi_fare/workflow.yaml
+```mermaid
+%%{init: {'theme': 'dark'}}%%
+flowchart RL
+  VAUTOFEWORKSPACE{{"${AUTOFE_WORKSPACE}"}} x-. /home/vmagent/app/workspace/ .-x autofelocalmode[autofe-local-mode]
+  VH45679{{../}} x-. /home/vmagent/app/ .-x autofelocalmode
+  VAUTOFEWORKSPACE x-. /home/vmagent/app/workspace/ .-x autofeEDAUI[autofe-EDA-UI]
+  VH45679 x-. /home/vmagent/app/ .-x autofeEDAUI
+  VAUTOFEWORKSPACE x-. /home/vmagent/app/workspace/ .-x autofenotebookUI[autofe-notebook-UI]
+  VH45679 x-. /home/vmagent/app/ .-x autofenotebookUI
+  VAUTOFEWORKSPACE x-. /home/vmagent/app/workspace/ .-x autofenotebookdev[autofe-notebook-dev]
+  VH45679 x-. /home/vmagent/app/ .-x autofenotebookdev
+
+  classDef volumes fill:#0f544e,stroke:#23968b
+  class VAUTOFEWORKSPACE,VH45679,VAUTOFEWORKSPACE,VH45679,VAUTOFEWORKSPACE,VH45679,VAUTOFEWORKSPACE,VH45679 volumes
+```
+
+The table below shows some of the environment variables you can control according to your needs.
+| Environment Variable Name | Default Value | Description |
+| --- | --- | --- |
+| AUTOFE_WORKSPACE | `${AUTOFE_DIR}/applications/nyc_taxi_fare` | Workflow workspace directory, will be mounted to `/home/vmagent/app/workspace/` |
+
+Configuration for ${AUTOFE_DIR}/applications/nyc_taxi_fare/workflow.yaml
 ``` yaml
 dataset_path: ./raw_data/train.csv
 target_label: fare_amount
 engine_type: spark
 ```
 
-#### Option 1: Jupyter Mode
-```
-cd ${AUTOFE_WORKSPACE}
-make workspace=`pwd`/applications/nyc_taxi_fare/ autofe-notebook-UI
+``` bash
+cd ${AUTOFE_DIR}/docker
+export AUTOFE_WORKSPACE=${AUTOFE_DIR}/applications/nyc_taxi_fare
+docker compose run autofe-local-mode
 ```
 
-#### Expected output: 
+#### Expected Output:
 * Docker container will be built and started
-* Then you can follow the instruction to open notebook on http://{host}:{port}/lab/tree/interactive_notebook.ipynb
-```
-[+] Building 2.9s (10/10) FINISHED
- => [internal] load build definition from Dockerfile-recdp                                                                                                             0.0s
- ...
- ⠿ Container autofe_pyrecdp  Created                                                                                                                                   0.0s
-Attaching to autofe_pyrecdp
-...
-autofe_notebook_UI  | [I 2023-05-15 15:48:10.346 ServerApp] Jupyter Server 2.5.0 is running at:
-autofe_notebook_UI  | [I 2023-05-15 15:48:10.346 ServerApp] http://{host}:8890/lab
-autofe_notebook_UI  | [I 2023-05-15 15:48:10.346 ServerApp]     http://127.0.0.1:8890/lab
-autofe_notebook_UI  | [I 2023-05-15 15:48:10.346 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
-```
-
-#### Option 2: Cmdline Mode
-```
-cd ${AUTOFE_WORKSPACE}
-make workspace=`pwd`/applications/nyc_taxi_fare/ autofe-local-workflow
-```
-
-#### Expected output:
-* Docker container will be built and started (same as option1)
 * Configuration file is parsed and input
 ```
 autofe_pyrecdp  | Configuration is {'dataset_path': './raw_data/train.csv', 'target_label': 'fare_amount'}
@@ -183,7 +223,86 @@ autofe_pyrecdp  |
 autofe_pyrecdp exited with code 0
 ```
 
-### 5. Built-In Use Cases
+#### Clean Up Docker Containers
+Stop containers created by docker compose and remove them.
+
+```bash
+docker compose down
+```
+
+### Run Using Argo
+#### 1. Install Helm
+- Install [Helm](https://helm.sh/docs/intro/install/)
+```bash
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
+chmod 700 get_helm.sh && \
+./get_helm.sh
+```
+#### 2. Setting up K8s
+- Install [Argo Workflows](https://argoproj.github.io/argo-workflows/quick-start/) and [Argo CLI](https://github.com/argoproj/argo-workflows/releases)
+- Configure your [Artifact Repository](https://argoproj.github.io/argo-workflows/configure-artifact-repository/)
+- Ensure that your dataset and config files are present in your chosen artifact repository.
+#### 3. Install Workflow Template
+```bash
+export NAMESPACE=argo
+helm install --namespace ${NAMESPACE} --set proxy=${http_proxy} auto-feature-engineering ./chart
+argo submit --from wftmpl/auto-feature-engineering --namespace=${NAMESPACE}
+```
+#### 4. View 
+To view your workflow progress
+```bash
+argo logs @latest -f
+```
+
+### Run Using Jupyter
+We setup Jupyter environment in docker image, so please follow [Set Up Docker Engine](#set-up-docker-engine) and [Setup Docker Compose](#setup-docker-compose) to install Docker Engine and Docker Compose first.
+
+#### Set Up Docker Image
+Build or pull the provided docker image.
+
+```bash 
+cd $AUTOFE_DIR/docker
+docker compose build
+```
+Or
+```bash
+docker pull intel/ai-workflows:pa-autofe
+```
+
+#### Run Pipeline with Jupyter
+This command will build RecDP docker image and starts docker container. `$AUTOFE_WORKSPACE` directory will be mounted to docker container and corresponding workflow will be launched in container. When the command completes successfully, a `EDA` folder will be created under $workspace folder, containing transformed dataset and `pipeline.json` file that contains feature transform pipeline created by RecDP.
+> Note: We use system proxy from host while building docker image, so please set correct environment param for `http_proxy` and `https_proxy` in host.
+
+Configuration for ${AUTOFE_DIR}/applications/nyc_taxi_fare/workflow.yaml
+``` yaml
+dataset_path: ./raw_data/train.csv
+target_label: fare_amount
+engine_type: spark
+```
+
+``` bash
+cd ${AUTOFE_DIR}/docker
+export AUTOFE_WORKSPACE=${AUTOFE_DIR}/applications/nyc_taxi_fare
+docker compose run autofe-notebook-UI
+```
+
+#### Expected Output: 
+* Docker container will be built and started
+* Then you can follow the instruction to open notebook on http://{host}:{port}/lab/tree/interactive_notebook.ipynb
+```
+[+] Building 2.9s (10/10) FINISHED
+ => [internal] load build definition from Dockerfile-recdp                                                                                                             0.0s
+ ...
+ ⠿ Container autofe_pyrecdp  Created                                                                                                                                   0.0s
+Attaching to autofe_pyrecdp
+...
+autofe_notebook_UI  | [I 2023-05-15 15:48:10.346 ServerApp] Jupyter Server 2.5.0 is running at:
+autofe_notebook_UI  | [I 2023-05-15 15:48:10.346 ServerApp] http://{host}:8890/lab
+autofe_notebook_UI  | [I 2023-05-15 15:48:10.346 ServerApp]     http://127.0.0.1:8890/lab
+autofe_notebook_UI  | [I 2023-05-15 15:48:10.346 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+```
+
+### Built-In Use Cases
 
 | Workflow Name | Description |
 | --- | --- |
@@ -199,11 +318,11 @@ autofe_pyrecdp exited with code 0
 
 ### 1. Prepare Your Own Dataset
 
-Create a workflow directory like `mkdir -p ${AUTOFE_WORKSPACE}/applications/customer_dataset/raw_data` and put your dataset under `raw_data` directory.
+Create a workflow directory like `mkdir -p ${AUTOFE_DIR}/applications/customer_dataset/raw_data` and put your dataset under `raw_data` directory.
 
 ### 2. Create Your workflow.yaml Configuration
 
-* Create workflow configuration yaml file `${AUTOFE_WORKSPACE}/applications/customer_dataset/workflow.yaml`
+* Create workflow configuration yaml file `${AUTOFE_DIR}/applications/customer_dataset/workflow.yaml`
 * Add workflow configurations in workflow.yaml, supported configurations are listed in the table
 
 | Name            | Description   |
@@ -221,18 +340,20 @@ engine_type: spark
 
 ### 3. Run the Workflow
 
-Pick either jupyter mode or cmdline mode to run the workflow. 
+Pick either jupyter mode or docker cmdline mode to run the workflow. 
 
 #### Option 1: Jupyter Mode
-```
-cd ${AUTOFE_WORKSPACE}
-make workspace=`pwd`/applications/customer_dataset/ autofe-notebook-UI
+``` bash
+cd ${AUTOFE_DIR}/docker
+export AUTOFE_WORKSPACE=${AUTOFE_DIR}/applications/customer_dataset
+docker compose run autofe-notebook-UI
 ```
 
-#### Option 2: Cmdline Mode
-```
-cd ${AUTOFE_WORKSPACE}
-make workspace=`pwd`/applications/customer_dataset/ autofe-local-workflow
+#### Option 2: Docker Cmdline Mode
+``` bash
+cd ${AUTOFE_DIR}/docker
+export AUTOFE_WORKSPACE=${AUTOFE_DIR}/applications/customer_dataset
+docker compose run autofe-local-mode
 ```
 
 ## Performance Overview
@@ -251,7 +372,7 @@ For more information about or to read about other relevant workflow examples, se
 If you have questions or issues about this workflow, contact the [Support Team](support_forum_link).
 If there is no support forum, and we want developers to use GitHub issues to submit bugs and enhancement requests, put a link to that GitHub repo's issues.
 
-The Auto Feature Engineering Workflow team tracks both bugs and enhancement requests using [GitHub issues](https://github.com/intel-sandbox/applications.ai.frameworks.workflow.autofe/issues). Before submitting a suggestion or bug report, search the [DLSA GitHub issues](https://github.com/intel/document-level-sentiment-analysis/issues) to see if your issue has already been reported.
+The Auto Feature Engineering Workflow team tracks both bugs and enhancement requests using [GitHub issues](https://github.com/intel/auto-feature-engineering/issues). Before submitting a suggestion or bug report, search the [DLSA GitHub issues](https://github.com/intel/document-level-sentiment-analysis/issues) to see if your issue has already been reported.
 
 ---
 
