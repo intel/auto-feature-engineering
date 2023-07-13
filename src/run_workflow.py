@@ -3,14 +3,15 @@ import os
 from tqdm import tqdm
 #import warnings
 #warnings.filterwarnings('ignore')
-pathlib = str(Path(__file__).parent.parent.resolve())
-workspace = os.path.join(pathlib, "workspace")
+# pathlib = str(Path(__file__).parent.parent.resolve())
+# workspace = os.path.join(pathlib, "workspace")
 
 from pyrecdp.autofe import FeatureWrangler
 from pyrecdp.core.utils import Timer
 import pandas as pd
 import yaml
 import shutil
+import argparse
 
 def auto_fe(train_data, label, engine_type):
     pipeline = FeatureWrangler(dataset=train_data, label=label)
@@ -68,7 +69,9 @@ def load_tsv_to_pandasdf(dataset):
             df = pd.read_table(dataset, on_bad_lines="skip")
     return df
 
-def run():
+def run(cfg):
+    pathlib = str(Path(cfg.workspace).parent.parent.resolve())
+    workspace = cfg.workspace
     # *** Prepare ***
     config_yaml = os.path.join(workspace, "workflow.yaml")
     with open(config_yaml, 'r') as f:
@@ -128,5 +131,15 @@ def run():
     print(f"Please visit EDA/UI_notebook.ipynb for details")
     print("**************************************\n")
 
+def parse_args():
+    parser = argparse.ArgumentParser('AutoFE-Workflow')
+    parser.add_argument('--workspace', type=str, default=None, help='AutoFE workspace')
+    args = parser.parse_args()
+    return args
+
 if __name__ == "__main__":
-    run()
+    cfg = parse_args()
+    if cfg.workspace is None:
+        pathlib = str(Path(__file__).parent.parent.resolve())
+        cfg.workspace = os.path.join(pathlib, "workspace")
+    run(cfg)
