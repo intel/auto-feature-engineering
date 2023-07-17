@@ -3,8 +3,7 @@ import os
 from tqdm import tqdm
 #import warnings
 #warnings.filterwarnings('ignore')
-# pathlib = str(Path(__file__).parent.parent.resolve())
-# workspace = os.path.join(pathlib, "workspace")
+pathlib = str(Path(__file__).parent.parent.resolve())
 
 from pyrecdp.autofe import FeatureWrangler
 from pyrecdp.core.utils import Timer
@@ -70,7 +69,6 @@ def load_tsv_to_pandasdf(dataset):
     return df
 
 def run(cfg):
-    pathlib = str(Path(cfg.workspace).parent.parent.resolve())
     workspace = cfg.workspace
     # *** Prepare ***
     config_yaml = os.path.join(workspace, "workflow.yaml")
@@ -140,6 +138,5 @@ def parse_args():
 if __name__ == "__main__":
     cfg = parse_args()
     if cfg.workspace is None:
-        pathlib = str(Path(__file__).parent.parent.resolve())
         cfg.workspace = os.path.join(pathlib, "workspace")
     run(cfg)
