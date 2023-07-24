@@ -1,0 +1,38 @@
+input: python gen_pipeline.py
+params:
+- key: 'workspace '
+  type: categorical
+  min: 0
+  max: 0
+  scale: linear
+  steps: 0
+  values:
+  - /cnvrg/applications/nyc_taxi_fare/
+computes:
+- SPR.Large
+image: aiops/autofe:pa
+description: AutoFE_create_pipeline
+type: exec
+git_commit: 
+git_branch: 
+mount_folders:
+- ''
+icon: python
+output_dir: output
+confirmation: false
+standalone_mode: false
+notify_on_error: false
+notify_on_success: false
+emails: []
+objective: 
+objective_goal: 
+objective_function: min
+max_jobs: -1
+parallel_jobs: -1
+algorithm: GridSearch
+queue_slug: ildjaux68t7dxx7q55lc
+title: AutoFE_create_pipeline
+top: 126
+left: 437
+conditions: []
+:commit: 38481c57a34577b7a292e38454908470990741cf

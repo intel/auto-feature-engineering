@@ -1,0 +1,323 @@
+flow: AutoFE
+recurring: 
+next_run_utc: 
+tasks:
+- input: python src/lgbm_train.py
+  params:
+  - key: 'workspace '
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - applications/nyc_taxi_fare/
+  - key: train
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - 'True'
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: train model
+  type: exec
+  git_commit: 
+  git_branch: 
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: train model
+  top: 126
+  left: 917
+  conditions: []
+  commit: 38481c57a34577b7a292e38454908470990741cf
+- input: python src/dataset_split.py
+  params:
+  - key: workspace
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - applications/nyc_taxi_fare/
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: train_test_split
+  type: exec
+  git_commit: 
+  git_branch: 
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: train_test_split
+  top: 126
+  left: 217
+  conditions: []
+  commit: 38481c57a34577b7a292e38454908470990741cf
+- input: python src/gen_pipeline.py
+  params:
+  - key: 'workspace '
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - applications/nyc_taxi_fare/
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: AutoFE_create_pipeline
+  type: exec
+  git_commit: 
+  git_branch: 
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: AutoFE_create_pipeline
+  top: 126
+  left: 437
+  conditions: []
+  commit: 38481c57a34577b7a292e38454908470990741cf
+- input: python src/plot_pipeline.py
+  params:
+  - key: workspace
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - applications/nyc_taxi_fare/
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: view_pipeline
+  type: exec
+  git_commit: 
+  git_branch: 
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: view_pipeline
+  top: 8
+  left: 688
+  conditions: []
+  commit: 38481c57a34577b7a292e38454908470990741cf
+- input: python src/data_transform.py
+  params:
+  - key: workspace
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - applications/nyc_taxi_fare/
+  - key: train
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - 'True'
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: fittransform_train
+  type: exec
+  git_commit: 
+  git_branch: 
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: fittransform_train
+  top: 126
+  left: 686
+  conditions: []
+  commit: 38481c57a34577b7a292e38454908470990741cf
+- input: python src/data_transform.py
+  params:
+  - key: workspace
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - applications/nyc_taxi_fare/
+  - key: train
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - 'False'
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: transform_test
+  type: exec
+  git_commit: 
+  git_branch: 
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: transform_test
+  top: 261
+  left: 918
+  conditions: []
+  commit: 38481c57a34577b7a292e38454908470990741cf
+- input: python src/lgbm_train.py
+  params:
+  - key: workspace
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - applications/nyc_taxi_fare/
+  - key: train
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - 'False'
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: test
+  type: exec
+  git_commit: 
+  git_branch: 
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: test
+  top: 260
+  left: 1176
+  conditions: []
+  commit: 38481c57a34577b7a292e38454908470990741cf
+- title: nyc_taxi_fare_sample
+  top: 126
+  left: 2
+  description: nyc_taxi_fare_sample
+  conditions: []
+  type: data
+  dataset: nyc_taxi_fare_sample
+  data_commit: 
+  data_query: 
+  use_cached: true
+  sync_type: sync_all
+relations:
+- from: AutoFE_create_pipeline
+  to: view_pipeline
+- from: nyc_taxi_fare_sample
+  to: train_test_split
+- from: train_test_split
+  to: AutoFE_create_pipeline
+- from: AutoFE_create_pipeline
+  to: fittransform_train
+- from: fittransform_train
+  to: train model
+- from: transform_test
+  to: test
+- from: train model
+  to: test
+- from: fittransform_train
+  to: transform_test
