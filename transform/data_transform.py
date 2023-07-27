@@ -18,12 +18,10 @@ def auto_fe(train_data, label, engine_type):
 
 def run(cfg):
     workspace = cfg.workspace
-    # *** Prepare ***
-    config_yaml = os.path.join(workspace, "workflow.yaml")
-    with open(config_yaml, 'r') as f:
-        settings = yaml.safe_load(f)
-        
-    print(f"Configuration is {settings}")
+    target_label = cfg.target_label
+    engine_type = cfg.engine_type
+    train = cfg.train
+    print(f"Configuration is {cfg}")
 
     if not os.path.exists(os.path.join(workspace, 'EDA')):
         os.mkdir(os.path.join(workspace, 'EDA'))
@@ -36,8 +34,7 @@ def run(cfg):
     train_data = df
     
     # *** call autofe ***
-    engine_type = settings['engine_type'] if 'engine_type' in settings else 'pandas'
-    pipeline = FeatureWrangler(dataset=train_data, label=settings['target_label'])
+    pipeline = FeatureWrangler(dataset=train_data, label=target_label)
     pipeline.import_from_json(os.path.join(workspace, 'EDA', 'pipeline.json'))
     transformed_data = pipeline.fit_transform(engine_type = engine_type)
     # *** save results ***
@@ -68,12 +65,12 @@ def run(cfg):
 def parse_args():
     parser = argparse.ArgumentParser('AutoFE-Workflow')
     parser.add_argument('--workspace', type=str, default=None, help='AutoFE workspace')
+    parser.add_argument('--target_label', type=str, default=None, help='Dataset target label')
+    parser.add_argument('--engine_type', type=str, default=None, help='AutoFE execution engine type')
     parser.add_argument('--train', type=bool, default=False, help='Train/Test flag')
     args = parser.parse_args()
     return args
 
 if __name__ == "__main__":
     cfg = parse_args()
-    if cfg.workspace is None:
-        cfg.workspace = os.path.join(pathlib, "workspace")
     run(cfg)

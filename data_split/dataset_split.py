@@ -1,21 +1,11 @@
 from pathlib import Path
 import os
 from tqdm import tqdm
-#import warnings
-#warnings.filterwarnings('ignore')
-pathlib = str(Path(__file__).parent.parent.resolve())
-
-from pyrecdp.autofe import FeatureWrangler
 from pyrecdp.core.utils import Timer
 import pandas as pd
 import yaml
 import shutil
 import argparse
-
-def auto_fe(train_data, label, engine_type):
-    pipeline = FeatureWrangler(dataset=train_data, label=label)
-    transformed_data = pipeline.fit_transform(engine_type = engine_type)
-    return pipeline, transformed_data
 
 def load_csv_to_pandasdf(dataset):
     if os.path.isdir(dataset):
@@ -70,29 +60,25 @@ def load_tsv_to_pandasdf(dataset):
 
 def run(cfg):
     workspace = cfg.workspace
-    # *** Prepare ***
-    config_yaml = os.path.join(workspace, "workflow.yaml")
-    with open(config_yaml, 'r') as f:
-        settings = yaml.safe_load(f)
-        
-    print(f"Configuration is {settings}")
+    dataset_path = cfg.dataset_path
+    print(f"Configuration is {cfg}")
 
     if not os.path.exists(os.path.join(workspace, 'EDA')):
         os.mkdir(os.path.join(workspace, 'EDA'))
     
     # *** Read Data ***
-    if not os.path.exists(os.path.join(workspace, settings['dataset_path'])):
-        raise FileNotFoundError(f"{settings['dataset_path']} is not exists.")
+    if not os.path.exists(dataset_path):
+        raise FileNotFoundError(f"{dataset_path} is not exists.")
     # if file is parquet
-    df = load_parquet_to_pandasdf(os.path.join(workspace, settings['dataset_path']))
+    df = load_parquet_to_pandasdf(dataset_path)
     if df is None:
         # if file is csv
-        df = load_csv_to_pandasdf(os.path.join(workspace, settings['dataset_path']))
+        df = load_csv_to_pandasdf(dataset_path)
     if df is None:
         # if file is tsv
-        df = load_tsv_to_pandasdf(os.path.join(workspace, settings['dataset_path']))
+        df = load_tsv_to_pandasdf(dataset_path)
     if df is None:
-        raise ValueError(f"can't read {settings['dataset_path']} either as parquet or csv.")
+        raise ValueError(f"can't read {dataset_path} either as parquet or csv.")
     
     total_len = df.shape[0]
     test_len = int(total_len * 0.1)
@@ -104,11 +90,10 @@ def run(cfg):
 def parse_args():
     parser = argparse.ArgumentParser('AutoFE-Workflow')
     parser.add_argument('--workspace', type=str, default=None, help='AutoFE workspace')
+    parser.add_argument('--dataset_path', type=str, default=None, help='Dataset location')
     args = parser.parse_args()
     return args
 
 if __name__ == "__main__":
     cfg = parse_args()
-    if cfg.workspace is None:
-        cfg.workspace = os.path.join(pathlib, "workspace")
     run(cfg)

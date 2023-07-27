@@ -1,10 +1,6 @@
 from pathlib import Path
 import os
 from tqdm import tqdm
-#import warnings
-#warnings.filterwarnings('ignore')
-pathlib = str(Path(__file__).parent.parent.resolve())
-
 from pyrecdp.autofe import FeatureWrangler
 from pyrecdp.core.utils import Timer
 import pandas as pd
@@ -31,12 +27,8 @@ def load_parquet_to_pandasdf(dataset):
 
 def run(cfg):
     workspace = cfg.workspace
-    # *** Prepare ***
-    config_yaml = os.path.join(workspace, "workflow.yaml")
-    with open(config_yaml, 'r') as f:
-        settings = yaml.safe_load(f)
-        
-    print(f"Configuration is {settings}")
+    target_label = cfg.target_label
+    print(f"Configuration is {cfg}")
 
     if not os.path.exists(os.path.join(workspace, 'EDA')):
         os.mkdir(os.path.join(workspace, 'EDA'))
@@ -52,18 +44,16 @@ def run(cfg):
         train_data.to_csv(os.path.join(workspace, 'EDA', 'original_data_sample.csv'), index = False)
     
     # *** generate pipeline ***
-    engine_type = settings['engine_type'] if 'engine_type' in settings else 'pandas'
-    pipeline = FeatureWrangler(dataset=train_data, label=settings['target_label'])
+    pipeline = FeatureWrangler(dataset=train_data, label=target_label)
     pipeline.export(os.path.join(workspace, 'EDA', 'pipeline.json'))
 
 def parse_args():
     parser = argparse.ArgumentParser('AutoFE-Workflow')
     parser.add_argument('--workspace', type=str, default=None, help='AutoFE workspace')
+    parser.add_argument('--target_label', type=str, default=None, help='Dataset target label')
     args = parser.parse_args()
     return args
 
 if __name__ == "__main__":
     cfg = parse_args()
-    if cfg.workspace is None:
-        cfg.workspace = os.path.join(pathlib, "workspace")
     run(cfg)

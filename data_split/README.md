@@ -3,3 +3,4 @@
 
 ## Input Arguments:
 * `--workspace`: AutoFE workspace, eg. `/cnvrg/applications/nyc_taxi_fare/`
+* `--dataset_path`: Dataset location

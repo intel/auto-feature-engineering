@@ -1,0 +1,320 @@
+---
+title: Auto Feature Engineering #rameter
+version: 1.0.0 # Required
+description: Automatic feature engineering
+long_description: This blueprint includes ClinicalBERT PyTorch model Training, Quantization, and Inference for Disease Prediction from symptoms and optimizing it using Intel® AI Analytics Toolkit components i.e. Intel® Extension for PyTorch*(IPEX) and Intel® Neural Compressor(INC). 
+
+# Optional properties for crediting authors
+author: "Intel"
+author_email: "info@cnvrg.io"
+
+tags:
+  - training
+
+# List of tasks (libraries)
+tasks:
+  - title: NYC
+    top: 300
+    left: 200
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: data
+
+    # The library data
+    library: nyc_sample
+    library_version: 1.0.0
+
+    requirements:
+      cpu: 24
+      memory: 48
+      gpu: 0
+      hpu: 0
+
+    image: aiops/autofe:pa
+    language: python3
+
+  - title: Data Split
+    top: 300
+    left: 200
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: exec
+
+    # The library data
+    library: data_split
+    library_version: 1.0.0
+
+    # The flattened library parameters (in this case we have training library)
+    command: python3 dataset_split.py
+
+    requirements:
+      cpu: 24
+      memory: 48
+      gpu: 0
+      hpu: 0
+
+    image: aiops/autofe:pa
+    language: python3
+
+    # The "arguments" property changes to "params", rest remains the same.
+    # Params in the blueprint yaml can be used to override the arguments in the library.
+    params:
+      - key: workspace
+        type: 'categorical'
+        values:
+          - '/cnvrg'
+      - key: dataset_path
+        type: 'categorical'
+        values:
+          - '/data/nyc/train.csv'
+
+  - title: Gen Pipeline
+    top: 300
+    left: 400
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: exec
+
+    # The library data
+    library: gen_pipeline
+    library_version: 1.0.0
+
+    # The flattened library parameters (in this case we have training library)
+    command: python3 gen_pipeline.py
+
+    requirements:
+      cpu: 24
+      memory: 48
+      gpu: 0
+      hpu: 0
+
+    image: aiops/autofe:pa
+    language: python3
+
+    # The "arguments" property changes to "params", rest remains the same.
+    # Params in the blueprint yaml can be used to override the arguments in the library.
+    params:
+      - key: workspace
+        type: 'categorical'
+        values:
+          - '/cnvrg'
+      - key: target_label
+        type: 'categorical'
+        values:
+          - 'fare_amount'
+
+  - title: View Pipeline
+    top: 300
+    left: 600
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: exec
+
+    # The library data
+    library: view_pipeline
+    library_version: 1.0.0
+
+    # The flattened library parameters (in this case we have training library)
+    command: python view_pipeline.py
+
+    requirements:
+      cpu: 24
+      memory: 48
+      gpu: 0
+      hpu: 0
+
+    image: aiops/autofe:pa
+    language: python3
+
+    # The "arguments" property changes to "params", rest remains the same.
+    # Params in the blueprint yaml can be used to override the arguments in the library.
+    params:
+      - key: workspace
+        type: 'categorical'
+        values:
+          - '/cnvrg'
+      - key: target_label
+        type: 'categorical'
+        values:
+          - 'fare_amount'
+
+  - title: Fit Transform Train
+    top: 100
+    left: 800
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: exec
+
+    # The library data
+    library: transform
+    library_version: 1.0.0
+    # The flattened library parameters (in this case we have training library)
+    command: python3 data_transform.py
+
+    requirements:
+      cpu: 24
+      memory: 48
+      gpu: 0
+      hpu: 0
+
+    image: aiops/autofe:pa
+    language: python3
+
+    # The "arguments" property changes to "params", rest remains the same.
+    # Params in the blueprint yaml can be used to override the arguments in the library.
+    params:
+      - key: workspace
+        type: 'categorical'
+        values:
+          - '/cnvrg'
+      - key: target_label
+        type: 'categorical'
+        values:
+          - 'fare_amount'
+      - key: engine_type
+        type: 'categorical'
+        values:
+          - 'spark'
+      - key: train
+        type: 'categorical'
+        values:
+          - 'True'
+                    
+  - title: Transform Test
+    top: 100
+    left: 1000
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: exec
+
+    # The library data
+    library: transform
+    library_version: 1.0.0
+
+    # The flattened library parameters (in this case we have training library)
+    command: python data_transform.py
+
+    requirements:
+      cpu: 24
+      memory: 48
+      gpu: 0
+      hpu: 0
+
+    image: aiops/autofe:pa
+    language: python3
+
+    # The "arguments" property changes to "params", rest remains the same.
+    # Params in the blueprint yaml can be used to override the arguments in the library.
+    params:
+      - key: workspace
+        type: 'categorical'
+        values:
+          - '/cnvrg'
+      - key: target_label
+        type: 'categorical'
+        values:
+          - 'fare_amount'
+      - key: engine_type
+        type: 'categorical'
+        values:
+          - 'spark'
+      - key: train
+        type: 'categorical'
+        values:
+          - 'False'
+
+  - title: Train Model
+    top: 500
+    left: 800
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: exec
+
+    # The library data
+    library: train
+    library_version: 1.0.0
+
+    # The flattened library parameters (in this case we have training library)
+    command: python lgbm_train.py
+
+    requirements:
+      cpu: 24
+      memory: 48
+      gpu: 0
+      hpu: 0
+
+    image: aiops/autofe:pa
+    language: python3
+
+    # The "arguments" property changes to "params", rest remains the same.
+    # Params in the blueprint yaml can be used to override the arguments in the library.
+    params:
+      - key: workspace
+        type: 'categorical'
+        values:
+          - '/cnvrg'
+      - key: target_label
+        type: 'categorical'
+        values:
+          - 'fare_amount'
+      - key: train
+        type: 'categorical'
+        values:
+          - 'True'
+
+  - title: Test
+    top: 500
+    left: 800
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: exec
+
+    # The library data
+    library: train
+    library_version: 1.0.0
+
+    # The flattened library parameters (in this case we have training library)
+    command: python lgbm_train.py
+
+    requirements:
+      cpu: 24
+      memory: 48
+      gpu: 0
+      hpu: 0
+
+    image: aiops/autofe:pa
+    language: python3
+
+    # The "arguments" property changes to "params", rest remains the same.
+    # Params in the blueprint yaml can be used to override the arguments in the library.
+    params:
+      - key: workspace
+        type: 'categorical'
+        values:
+          - ''
+      - key: target_label
+        type: 'categorical'
+        values:
+          - 'fare_amount'
+      - key: train
+        type: 'categorical'
+        values:
+          - 'False'
+
+relations:
+  - from: NYC
+    to: Data Split
+  - from: Data Split
+    to: Gen Pipeline
+  - from: Gen Pipeline
+    to:   View Pipeline
+  - from: Gen Pipeline
+    to:   Fit Transform Train
+  - from: Fit Transform Train
+    to: Transform Test
+  - from: Fit Transform Train
+    to: Train Model
+  - from: Train Model
+    to: Test
+  - from: Transform Test
+    to: Test

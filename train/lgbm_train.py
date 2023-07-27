@@ -13,10 +13,8 @@ pathlib = str(Path(__file__).parent.parent.resolve())
 
 def run(cfg):
     workspace = cfg.workspace
-    config_yaml = os.path.join(workspace, "workflow.yaml")
-    with open(config_yaml, 'r') as f:
-        settings = yaml.safe_load(f)
-    print(f"Configuration is {settings}")
+    target_label = cfg.target_label
+    print(f"Configuration is {cfg}")
     if not os.path.exists(os.path.join(workspace, 'EDA')):
         raise FileNotFoundError(f"No EDA folder under {workspace}, please execute pipeline first")
 
@@ -49,10 +47,10 @@ def run(cfg):
         test_sample = transformed_data.sample(frac = 0.1)
         train_sample = transformed_data.drop(test_sample.index)
 
-        x_train = train_sample.drop(columns=['fare_amount'])
-        y_train = train_sample['fare_amount'].values
-        x_val = test_sample.drop(columns=['fare_amount'])
-        y_val = test_sample['fare_amount'].values
+        x_train = train_sample.drop(columns=[target_label])
+        y_train = train_sample[target_label].values
+        x_val = test_sample.drop(columns=[target_label])
+        y_val = test_sample[target_label].values
         lgbm_train = lgbm.Dataset(x_train, y_train, silent=False)
         lgbm_val = lgbm.Dataset(x_val, y_val, silent=False)
 
@@ -60,8 +58,8 @@ def run(cfg):
         model.save_model(os.path.join(workspace, 'lgbm_model'))
     else:
         transformed_data = pd.read_parquet(os.path.join(workspace, 'transformed_test_data.parquet'))
-        x_val = transformed_data.drop(columns=['fare_amount'])
-        y_val = transformed_data['fare_amount'].values
+        x_val = transformed_data.drop(columns=[target_label])
+        y_val = transformed_data[target_label].values
         lgbm_val = lgbm.Dataset(x_val, y_val, silent=False)
         model = lgbm.Booster(model_file=os.path.join(workspace, 'lgbm_model'))
         pred = model.predict(x_val)
@@ -72,12 +70,11 @@ def run(cfg):
 def parse_args():
     parser = argparse.ArgumentParser('AutoFE-Workflow')
     parser.add_argument('--workspace', type=str, default=None, help='AutoFE workspace')
+    parser.add_argument('--target_label', type=str, default=None, help='Dataset target label')
     parser.add_argument('--train', type=bool, default=False, help='Train/Test flag')
     args = parser.parse_args()
     return args
 
 if __name__ == "__main__":
     cfg = parse_args()
-    if cfg.workspace is None:
-        cfg.workspace = os.path.join(pathlib, "workspace")
     run(cfg)

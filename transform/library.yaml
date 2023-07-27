@@ -1,46 +1,36 @@
-input: python data_transform.py
-params:
-- key: workspace
-  type: categorical
-  min: 0
-  max: 0
-  scale: linear
-  steps: 0
-  values:
-  - /cnvrg/applications/nyc_taxi_fare/
-- key: train
-  type: categorical
-  min: 0
-  max: 0
-  scale: linear
-  steps: 0
-  values:
-  - 'True'
-computes:
-- SPR.Large
-image: aiops/autofe:pa
-description: fittransform_train
-type: exec
-git_commit: 
-git_branch: 
-mount_folders:
-- ''
+---
+title: Transform
+version: 1.0.0
+description:  Data transformation
 icon: python
-output_dir: output
-confirmation: false
-standalone_mode: false
-notify_on_error: false
-notify_on_success: false
-emails: []
-objective: 
-objective_goal: 
-objective_function: min
-max_jobs: -1
-parallel_jobs: -1
-algorithm: GridSearch
-queue_slug: ildjaux68t7dxx7q55lc
-title: fittransform_train
-top: 126
-left: 686
-conditions: []
-:commit: 38481c57a34577b7a292e38454908470990741cf
+
+tags:
+  - training
+
+command: python3 data_transform.py
+requirements:
+  cpu: 24
+  memory: 48
+  gpu: 0
+  hpu: 0
+
+image: aiops/autofe:pa
+language: python3
+
+arguments:
+  - key: workspace
+    type: 'categorical'
+    values:
+      - ''
+  - key: target_label
+    type: 'categorical'
+    values:
+      - 'fare_amount'
+  - key: engine_type
+    type: 'categorical'
+    values:
+      - 'spark'
+  - key: train
+    type: 'categorical'
+    values:
+      - 'True'
