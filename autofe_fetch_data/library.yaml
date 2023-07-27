@@ -1,0 +1,24 @@
+---
+title: fetch data
+version: 1.0.0
+description:  Fetch Data from url or local fs
+icon: python
+
+tags:
+  - data
+
+command: python fetch_data.py
+requirements:
+  cpu: 24
+  memory: 48
+  gpu: 0
+  hpu: 0
+
+image: aiops/autofe:pa
+language: python3
+
+arguments:
+  - key: url
+    type: 'categorical'
+    values:
+      - 'sample.csv'

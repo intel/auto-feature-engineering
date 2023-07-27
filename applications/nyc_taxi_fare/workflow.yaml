@@ -1,3 +1,0 @@
-dataset_path: /data/nyc/train.csv
-target_label: fare_amount
-engine_type: spark

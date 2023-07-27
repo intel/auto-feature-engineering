@@ -1,0 +1,28 @@
+---
+title: Train
+version: 1.0.0
+description:  Train lightGBM with tranformed dataset
+icon: python
+
+tags:
+  - training
+
+command: python3 lgbm_train.py
+requirements:
+  cpu: 24
+  memory: 48
+  gpu: 0
+  hpu: 0
+
+image: aiops/autofe:pa
+language: python3
+
+arguments:
+  - key: workspace
+    type: 'categorical'
+    values:
+      - 'output'
+  - key: target_label
+    type: 'categorical'
+    values:
+      - 'fare_amount'

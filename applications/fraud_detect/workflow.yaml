@@ -1,3 +1,0 @@
-dataset_path: ./raw_data/card_transaction.v1.csv
-target_label: 'Is Fraud?'
-engine_type: pandas

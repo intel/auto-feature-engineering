@@ -1,0 +1,28 @@
+---
+title: Gen Pipeline
+version: 1.0.0
+description:  Perform feature profiling and generate AutoFE execution pipeline
+icon: python
+
+tags:
+  - training
+
+command: python3 gen_pipeline.py
+requirements:
+  cpu: 24
+  memory: 48
+  gpu: 0
+  hpu: 0
+
+image: aiops/autofe:pa
+language: python3
+
+arguments:
+  - key: workspace
+    type: 'categorical'
+    values:
+      - 'output'
+  - key: target_label
+    type: 'categorical'
+    values:
+      - 'fare_amount'

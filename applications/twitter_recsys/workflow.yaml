@@ -1,3 +1,0 @@
-dataset_path: ./raw_data/twitter_recsys.csv
-target_label: reply
-engine_type: spark
