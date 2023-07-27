@@ -7,6 +7,7 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error
 import lightgbm as lgbm
 import numpy as np
+import shutil
 pathlib = str(Path(__file__).parent.parent.resolve())
 
 
@@ -63,12 +64,11 @@ def run(cfg):
         pred = model.predict(x_val)
         rmse = np.sqrt(mean_squared_error(y_val, pred))
         print('Test dataset RMSE', rmse)
-        try:
-            shutil.copy(os.path.join("/input/fittransform_train/output", 'transformed_train_data.parquet'), os.path.join(workspace, 'transformed_train_data.parquet'))
-            shutil.copy(os.path.join("/input/transform_test/output", 'transformed_test_data.parquet'), os.path.join(workspace, 'transformed_test_data.parquet'))
-            shutil.copy(os.path.join("/input/autofe_create_pipeline/output", 'EDA', 'pipeline.json'), os.path.join(workspace, 'pipeline.json'))
-        except:
-            pass
+        shutil.copy(os.path.join("/input/fittransform_train/output", 'transformed_train_data.parquet'), os.path.join(workspace, 'transformed_train_data.parquet'))
+        shutil.copy(os.path.join("/input/transform_test/output", 'transformed_test_data.parquet'), os.path.join(workspace, 'transformed_test_data.parquet'))
+        shutil.copy(os.path.join("/input/autofe_create_pipeline/output", 'EDA', 'pipeline.json'), os.path.join(workspace, 'pipeline.json'))
+
+        print("To obtain transformed data and feature engineering pipeline, please go to Files -> output.")
 
 
 def parse_args():
