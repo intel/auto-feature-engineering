@@ -64,7 +64,7 @@ def run(cfg):
 
 def parse_args():
     parser = argparse.ArgumentParser('AutoFE-Workflow')
-    parser.add_argument('--workspace', type=str, default="", help='AutoFE workspace')
+    parser.add_argument('--workspace', type=str, default="output", help='AutoFE workspace')
     parser.add_argument('--target_label', type=str, default="fare_amount", help='Dataset target label')
     parser.add_argument('--engine_type', type=str, default="pandas", help='AutoFE execution engine type')
     parser.add_argument('--train', type=bool, default=False, help='Train/Test flag')

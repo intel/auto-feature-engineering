@@ -26,7 +26,7 @@ def run(cfg):
 
 def parse_args():
     parser = argparse.ArgumentParser('AutoFE-Workflow')
-    parser.add_argument('--workspace', type=str, default="", help='AutoFE workspace')
+    parser.add_argument('--workspace', type=str, default="output", help='AutoFE workspace')
     args = parser.parse_args()
     return args
 

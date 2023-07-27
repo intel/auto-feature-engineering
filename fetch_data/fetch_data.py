@@ -55,9 +55,10 @@ def load_tsv_to_pandasdf(dataset):
     return df
 
 def fetch_data(dataset_path):
+    output_dir = "output/"
     if dataset_path.startswith("https://"):
         a = urlparse(dataset_path)
-        to_save = os.path.basename(a.path)
+        to_save = os.path.join(output_dir, os.path.basename(a.path))
         if not os.path.exists(to_save):
             with requests.get(dataset_path, stream=True) as r:
                 # check header to get content length, in bytes
@@ -84,7 +85,7 @@ def fetch_data(dataset_path):
     if df is None:
         raise ValueError(f"can't read {to_save} either as parquet or csv.")
     
-    to_save = "dataset_cache.parquet"
+    to_save = os.path.join(output_dir, "dataset_cache.parquet")
     df.to_parquet(to_save)
     print(f"Data is fetched to {to_save}")
     
