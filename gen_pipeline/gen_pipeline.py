@@ -33,7 +33,7 @@ def run(cfg):
     if not os.path.exists(os.path.join(workspace, 'EDA')):
         os.mkdir(os.path.join(workspace, 'EDA'))
     
-    df = pd.read_parquet(os.path.join(workspace, 'train_sample.parquet'))
+    df = pd.read_parquet(os.path.join("/input/train_test_split/output", 'train_sample.parquet'))
     train_data = df
 
     # *** Save original data sample ***    

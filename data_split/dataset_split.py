@@ -7,7 +7,7 @@ import argparse
 
 def run(cfg):
     workspace = cfg.workspace
-    dataset_path = os.path.join(workspace, "dataset_cache.parquet")
+    dataset_path = os.path.join("/input/fetch_data/output", "dataset_cache.parquet")
     print(f"Configuration is {cfg}")
 
     if not os.path.exists(os.path.join(workspace, 'EDA')):

@@ -23,19 +23,19 @@ def run(cfg):
     train = cfg.train
     print(f"Configuration is {cfg}")
 
+    # *** Read Data ***
+    if cfg.train:
+        df = pd.read_parquet(os.path.join("/input/train_test_split/output", 'train_sample.parquet'))
+    else:
+        df = pd.read_parquet(os.path.join("/input/train_test_split/output", 'test_sample.parquet'))
+
+    train_data = df
     if not os.path.exists(os.path.join(workspace, 'EDA')):
         os.mkdir(os.path.join(workspace, 'EDA'))
     
-    # *** Read Data ***
-    if cfg.train:
-        df = pd.read_parquet(os.path.join(workspace, 'train_sample.parquet'))
-    else:
-        df = pd.read_parquet(os.path.join(workspace, 'test_sample.parquet'))
-    train_data = df
-    
     # *** call autofe ***
     pipeline = FeatureWrangler(dataset=train_data, label=target_label)
-    pipeline.import_from_json(os.path.join(workspace, 'EDA', 'pipeline.json'))
+    pipeline.import_from_json(os.path.join("/input/autofe_create_pipeline/output", 'EDA', 'pipeline.json'))
     transformed_data = pipeline.fit_transform(engine_type = engine_type)
     # *** save results ***
     if cfg.train:
