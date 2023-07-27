@@ -23,8 +23,12 @@ def run(cfg):
     train = cfg.train
     print(f"Configuration is {cfg}")
 
+    if str(cfg.train).lower() == 'true':
+        is_train = True
+    else:
+        is_train = False
     # *** Read Data ***
-    if cfg.train:
+    if is_train:
         df = pd.read_parquet(os.path.join("/input/train_test_split/output", 'train_sample.parquet'))
     else:
         df = pd.read_parquet(os.path.join("/input/train_test_split/output", 'test_sample.parquet'))
@@ -38,7 +42,7 @@ def run(cfg):
     pipeline.import_from_json(os.path.join("/input/autofe_create_pipeline/output", 'EDA', 'pipeline.json'))
     transformed_data = pipeline.fit_transform(engine_type = engine_type)
     # *** save results ***
-    if cfg.train:
+    if is_train:
         transformed_data.to_parquet(os.path.join(workspace, 'transformed_train_data.parquet'))
     else:
         transformed_data.to_parquet(os.path.join(workspace, 'transformed_test_data.parquet'))
@@ -67,7 +71,7 @@ def parse_args():
     parser.add_argument('--workspace', type=str, default="output", help='AutoFE workspace')
     parser.add_argument('--target_label', type=str, default="fare_amount", help='Dataset target label')
     parser.add_argument('--engine_type', type=str, default="pandas", help='AutoFE execution engine type')
-    parser.add_argument('--train', type=bool, default=False, help='Train/Test flag')
+    parser.add_argument('--train', type=str, default='False', help='Train/Test flag')
     args = parser.parse_args()
     return args
 

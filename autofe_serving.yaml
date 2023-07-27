@@ -1,0 +1,17 @@
+---
+title: Auto Feature Engineering Serving #rameter
+version: 1.0.0 # Required
+description: Automatic feature engineering
+long_description: This blueprint is to using Intel e2eAIOK RecDP toolkit to automatically convert customer data to ready-to-train feature enriched data.
+# Optional properties for crediting authors
+author: "Intel"
+author_email: "info@cnvrg.io"
+
+tasks:
+  - title: Deploy Task 1
+    top: 47
+    left: 53
+    description: Deploy Task 1
+    conditions: []
+    type: deploy
+relations: []
