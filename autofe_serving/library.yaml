@@ -1,0 +1,18 @@
+---
+title: autofe serving
+version: 1.0.0
+description:  provide AutoFE as Serving for customer data 
+icon: python
+
+tags:
+  - data
+
+command: python autofe_serve.py
+requirements:
+  cpu: 24
+  memory: 48
+  gpu: 0
+  hpu: 0
+
+image: aiops/autofe:pa
+language: python3

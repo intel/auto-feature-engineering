@@ -1,3 +1,0 @@
-dataset_path: ./raw_data/predictive-maintenance-dataset.csv
-target_label: vibration
-engine_type: pandas

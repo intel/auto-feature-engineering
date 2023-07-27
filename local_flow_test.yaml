@@ -1,0 +1,268 @@
+---
+flow: AutoFE
+recurring: 
+next_run_utc: 
+tasks:
+- input: python autofe_transform/data_transform.py
+  params:
+  - key: train
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - 'False'
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: transform test
+  type: exec
+  git_commit: latest
+  git_branch: blueprint
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: transform test
+  top: 226
+  left: 724
+  conditions: []
+- input: python autofe_fetch_data/fetch_data.py
+  params:
+  - key: url
+    type: discrete
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - sample.csv
+  computes:
+  - SPR.Large
+  image: cnvrg:v5.0
+  description: fetch data
+  type: exec
+  git_commit: latest
+  git_branch: blueprint
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: fetch data
+  top: 126
+  left: 9
+  conditions: []
+- input: python data_split/dataset_split.py
+  params: []
+  computes:
+  - SPR.Large
+  image: cnvrg/cnvrg:v5.0
+  description: train test split
+  type: exec
+  git_commit: latest
+  git_branch: blueprint
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: train test split
+  top: 126
+  left: 217
+  conditions: []
+- input: python autofe_gen_pipeline/gen_pipeline.py
+  params:
+  - key: target_label
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - fare_amount
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: AutoFE create pipeline
+  type: exec
+  git_commit: latest
+  git_branch: blueprint
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: AutoFE create pipeline
+  top: 126
+  left: 458
+  conditions: []
+- input: python autofe_transform/data_transform.py
+  params:
+  - key: train
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - 'True'
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: fittransform train
+  type: exec
+  git_commit: latest
+  git_branch: blueprint
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: fittransform train
+  top: 28
+  left: 726
+  conditions: []
+- input: python autofe_train/lgbm_train.py
+  params:
+  - key: train
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - 'True'
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: train model
+  type: exec
+  git_commit: latest
+  git_branch: blueprint
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: train model
+  top: 28
+  left: 981
+  conditions: []
+- input: python autofe_train/lgbm_train.py
+  params:
+  - key: train
+    type: categorical
+    min: 0
+    max: 0
+    scale: linear
+    steps: 0
+    values:
+    - 'False'
+  computes:
+  - SPR.Large
+  image: aiops/autofe:pa
+  description: test
+  type: exec
+  git_commit: latest
+  git_branch: blueprint
+  mount_folders: []
+  icon: python
+  output_dir: output
+  confirmation: false
+  standalone_mode: false
+  notify_on_error: false
+  notify_on_success: false
+  emails: []
+  objective: 
+  objective_goal: 
+  objective_function: min
+  max_jobs: -1
+  parallel_jobs: -1
+  algorithm: GridSearch
+  queue_slug: ildjaux68t7dxx7q55lc
+  title: test
+  top: 227
+  left: 1226
+  conditions: []
+relations:
+- from: train test split
+  to: AutoFE create pipeline
+- from: AutoFE create pipeline
+  to: fittransform train
+- from: fittransform train
+  to: train model
+- from: transform test
+  to: test
+- from: train model
+  to: test
+- from: fetch data
+  to: train test split
+- from: train test split
+  to: fittransform train
+- from: train test split
+  to: transform test
+- from: AutoFE create pipeline
+  to: transform test

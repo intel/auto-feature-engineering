@@ -1,3 +1,0 @@
-dataset_path: ./raw_data/amazon_product_review.parquet
-target_label: star_rating
-engine_type: spark
