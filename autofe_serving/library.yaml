@@ -1,13 +1,14 @@
 ---
-title: autofe serving
+title: AutoFE Serving
 version: 1.0.0
 description:  provide AutoFE as Serving for customer data 
 icon: python
 
 tags:
-  - data
+  - inference
 
-command: python autofe_serve.py
+kind: webservice
+
 requirements:
   cpu: 24
   memory: 48
@@ -16,3 +17,10 @@ requirements:
 
 image: aiops/autofe:pa
 language: python3
+
+arguments:
+  gunicorn_config:
+    - key: workers
+      value: '1'
+  accept_files: false
+  file_name: autofe_serve.py
