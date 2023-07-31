@@ -20,7 +20,7 @@ tasks:
     type: exec
 
     # The library data
-    library: autofe_fetch_data
+    library: fetch-data
     library_version: 1.0.0
 
     requirements:
@@ -46,7 +46,7 @@ tasks:
     type: exec
 
     # The library data
-    library: autofe_data_split
+    library: data-split
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -77,7 +77,7 @@ tasks:
     type: exec
 
     # The library data
-    library: autofe_gen_pipeline
+    library: gen-pipeline
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -112,7 +112,7 @@ tasks:
     type: exec
 
     # The library data
-    library: autofe_transform
+    library: transform
     library_version: 1.0.0
     # The flattened library parameters (in this case we have training library)
     command: python3 data_transform.py
@@ -154,7 +154,7 @@ tasks:
     type: exec
 
     # The library data
-    library: autofe_transform
+    library: transform
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -197,7 +197,7 @@ tasks:
     type: exec
 
     # The library data
-    library: autofe_train
+    library: train
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -236,7 +236,7 @@ tasks:
     type: exec
 
     # The library data
-    library: autofe_train
+    library: train
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -268,21 +268,17 @@ tasks:
           - 'False'
 
 relations:
-- from: train test split
-  to: AutoFE create pipeline
-- from: AutoFE create pipeline
-  to: fittransform train
-- from: fittransform train
-  to: train model
-- from: transform test
-  to: test
-- from: train model
-  to: test
-- from: fetch data
-  to: train test split
-- from: train test split
-  to: fittransform train
-- from: train test split
-  to: transform test
-- from: AutoFE create pipeline
-  to: transform test
+- from: Fetch Data
+  to: Data Split
+- from: Data Split
+  to: Gen Pipeline
+- from: Gen Pipeline
+  to: Fit Transform Train
+- from: Fit Transform Train
+  to: Transform Test
+- from: Fit Transform Train
+  to: Train Model
+- from: Train Model
+  to: Test
+- from: Transform Test
+  to: Test

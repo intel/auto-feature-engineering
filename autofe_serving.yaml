@@ -1,17 +1,38 @@
 ---
-title: Auto Feature Engineering Serving #rameter
-version: 1.0.0 # Required
+title: Auto Feature Engineering Serving
+version: 1.0.0
 description: Automatic feature engineering
 long_description: This blueprint is to using Intel e2eAIOK RecDP toolkit to automatically convert customer data to ready-to-train feature enriched data.
 # Optional properties for crediting authors
 author: "Intel"
 author_email: "info@cnvrg.io"
 
+tags:
+  - inference
+
 tasks:
-  - title: Deploy Task 1
+  - title: AutoFE Serving
     top: 47
     left: 53
-    description: Deploy Task 1
-    conditions: []
     type: deploy
+    library: autofe-serving
+    library_version: 1.0.0
+    command: python autofe_serve.py
+    kind: webservice
+
+    requirements:
+      cpu: 24
+      memory: 48
+      gpu: 0
+      hpu: 0
+
+    image: aiops/autofe:pa
+    language: python3
+
+    accept_files: false
+    gunicorn_config:
+      - key: workers
+        value: '1'
+    file_name: autofe_serve.py
+
 relations: []
