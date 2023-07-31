@@ -1,5 +1,5 @@
 ---
-title: Gen Pipeline
+title: AutoFE Gen Pipeline
 version: 1.0.0
 description:  Perform feature profiling and generate AutoFE execution pipeline
 icon: python

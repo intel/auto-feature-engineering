@@ -1,11 +1,11 @@
 ---
-title: fetch data
+title: Fetch Data
 version: 1.0.0
 description:  Fetch Data from url or local fs
 icon: python
 
 tags:
-  - data
+  - training
 
 command: python fetch_data.py
 requirements:
