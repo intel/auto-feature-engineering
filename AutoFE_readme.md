@@ -12,7 +12,7 @@ The Blueprint leverages Intel Auto-Feature-Engineering toolkit (codename: RecDP)
 
 * Step by step explanation:
     1) fetch data: default config will use sampled NYC taxi fare dataset. You can also specify your own dataset by providing dataset public URL.
-    2) train test split: use random select to select train and test by 9:1
+    2) train test split: use random select to split train and test by 9:1
     3) AutoFE create pipeline: analyze train data and automatically create data pipeline, data pipeline will be saved as ‘pipeline.json’ to your ‘Files’. E.g.: If datetime features detected, datetime will be transformed to ‘day’, ‘hour’…  
     4) fit transform train: execute pre-generated data pipeline to train dataset.
     5) transform test: execute pre-generated data pipeline to test dataset.
@@ -25,9 +25,7 @@ The Blueprint leverages Intel Auto-Feature-Engineering toolkit (codename: RecDP)
   ![image](https://github.com/intel/auto-feature-engineering/assets/4355494/985db1cb-1284-41e5-b381-830600336272)
 
 * How to use your own data:
-Following this format to do input <code>{"dataset_path": "$your_dataset_url", "target_label": "$your_target"}</code>
-
-Example as below:
+Following this format to do input <code>{"dataset_path": "$your_dataset_url", "target_label": "$your_target"}</code>, Example as below:
 ![image](https://github.com/intel/auto-feature-engineering/assets/4355494/239c4a27-c9dc-4ceb-9ca2-5f13f0951dff)
 
 
