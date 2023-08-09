@@ -20,6 +20,8 @@ def run(cfg):
     workspace = cfg.workspace
     target_label = cfg.target_label
     engine_type = cfg.engine_type
+    input_path = cfg.input_file
+    pipeline_path = cfg.pipeline
     train = cfg.train
     print(f"Configuration is {cfg}")
 
@@ -29,9 +31,9 @@ def run(cfg):
         is_train = False
     # *** Read Data ***
     if is_train:
-        df = pd.read_parquet(os.path.join("/input/train_test_split/output", 'train_sample.parquet'))
+        df = pd.read_parquet(input_path)
     else:
-        df = pd.read_parquet(os.path.join("/input/train_test_split/output", 'test_sample.parquet'))
+        df = pd.read_parquet(input_path)
 
     train_data = df
     if not os.path.exists(os.path.join(workspace, 'EDA')):
@@ -39,7 +41,7 @@ def run(cfg):
     
     # *** call autofe ***
     pipeline = FeatureWrangler(dataset=train_data, label=target_label)
-    pipeline.import_from_json(os.path.join("/input/autofe_create_pipeline/output", 'EDA', 'pipeline.json'))
+    pipeline.import_from_json(pipeline_path)
     transformed_data = pipeline.fit_transform(engine_type = engine_type)
     # *** save results ***
     if is_train:
@@ -69,6 +71,8 @@ def run(cfg):
 def parse_args():
     parser = argparse.ArgumentParser('AutoFE-Workflow')
     parser.add_argument('--workspace', type=str, default="output", help='AutoFE workspace')
+    parser.add_argument('--input_file', type=str, default=None, help='AutoFE workspace')
+    parser.add_argument('--pipeline', type=str, default=None, help='AutoFE workspace')
     parser.add_argument('--target_label', type=str, default="fare_amount", help='Dataset target label')
     parser.add_argument('--engine_type', type=str, default="pandas", help='AutoFE execution engine type')
     parser.add_argument('--train', type=str, default='False', help='Train/Test flag')
