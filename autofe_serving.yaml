@@ -29,10 +29,15 @@ tasks:
     image: aiops/autofe:pa
     language: python3
 
-    accept_files: false
-    gunicorn_config:
-      - key: workers
-        value: '1'
-    file_name: autofe_serve.py
+    accept_files: False
 
+    file_name: autofe_serve.py
+    function_name: predict
+    prep_file: ''
+    prep_function: ''
+    input_example:
+      vars: ''
+    input_schema:
+      vars: text
+    output_schema: {}
 relations: []

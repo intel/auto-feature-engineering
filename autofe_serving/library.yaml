@@ -19,8 +19,13 @@ image: aiops/autofe:pa
 language: python3
 
 arguments:
-  gunicorn_config:
-    - key: workers
-      value: '1'
   accept_files: false
   file_name: autofe_serve.py
+  function_name: predict
+  prep_file: ''
+  prep_function: ''
+  input_example:
+    vars: ''
+  input_schema:
+    vars: text
+  output_schema: {}

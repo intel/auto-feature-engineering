@@ -127,8 +127,9 @@ def load_setting(cfg):
         raise ValueError(ret)
     return dataset_path, target_label, engine_type
 
-def run(cfg):
+def predict(data):
     workspace = ""
+    cfg = data['vars']
     try:
         dataset_path, target_label, engine_type = load_setting(cfg)
     except Exception as e:
@@ -178,9 +179,3 @@ def run(cfg):
     print(ret)
 
     return ret
-
-
-if __name__ == "__main__":
-    #ret = run('{"dataset_path": "https://cnvrg-s3-singularity.s3.us-east-2.amazonaws.com/data_blob_versions/assets/000/154/074/original/test_amz.tsv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIA4WNH6RXCJJ6M4C6S%2F20230718%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20230718T233022Z&X-Amz-Expires=86400&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEPf%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMiJIMEYCIQCDNbDbNXUQhaTH9F1FLYA1Y14lyrDCUURWsEYurA9%2BVgIhAMkKAtqSydncwE8bNPGR7NVsdyiD0tila7AyWIaj5D7hKqsCCID%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAhoMODcyNzY3NDU4NzU2IgyXH%2BQAnam%2F67B0z8wq%2FwEHAhqQD3%2FALzjqRQaorJNXYNs5XN%2BtcQ0rwzvJ8gXBAzX4ZM4zZ%2FoigxQgqa8Az7qmW0dT%2B634ee2trw0wWLq7UTrVUDrU3l%2F5tirJ8cgwdiFKFhg03x30sLLGh6CsjfV9%2FH%2BQ%2FuFEHJ72q%2FQjn%2BT5yfutS9eZ9XW5FO5f4fapEUnIsG9SZRa6YrSXxiINUBk0ealcp8OaOLEklR1Mud1nHnnHR5vc8dr80QvWEh1D%2F7mYOWcrRn%2B0jDBwlyjPR821WIZIuKAd%2BMX0dVllUu6hJzBxbfLUQgRa4Aig7AaD55PEj3UsMbefC7antZjfXfEKAvjsDRl3%2FH8zx4AVbGow2LjcpQY6nAHH0kM7u8fYuF%2Bk267fiu4Ps%2BbSuQ4ZtfCL5wzGxjMxgOl9q0VlW0ehQK8f8AlKLiZdbdZ2MhSHqNbrgkwyAbnsXEPqemJRPQVAA4tgf4QJLqMbeIQw9ibE8E7A31MN20w4%2Bcuo7aRiVu6lbt2gZB5hFxt3pn72HlFXm3FlmSwV6jfEYwmOSzdJ5Pe6fzhC6A80r%2Fo2NMCdKvbYL6o%3D&X-Amz-SignedHeaders=host&X-Amz-Signature=c83d0b17d87f0a3046eb3246e16229a418174beee9f81457f32250129fe30f11", "target_label": "star_rating"}')
-    ret = run("hhh")
-    print(ret)
