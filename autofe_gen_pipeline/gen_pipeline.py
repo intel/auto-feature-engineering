@@ -28,12 +28,13 @@ def load_parquet_to_pandasdf(dataset):
 def run(cfg):
     workspace = cfg.workspace
     target_label = cfg.target_label
+    input_file = cfg.input_file
     print(f"Configuration is {cfg}")
 
     if not os.path.exists(os.path.join(workspace, 'EDA')):
         os.mkdir(os.path.join(workspace, 'EDA'))
     
-    df = pd.read_parquet(os.path.join("/input/train_test_split/output", 'train_sample.parquet'))
+    df = pd.read_parquet(input_file)
     train_data = df
 
     # *** Save original data sample ***    
@@ -51,6 +52,7 @@ def parse_args():
     parser = argparse.ArgumentParser('AutoFE-Workflow')
     parser.add_argument('--workspace', type=str, default="output", help='AutoFE workspace')
     parser.add_argument('--target_label', type=str, default="fare_amount", help='Dataset target label')
+    parser.add_argument('--input_file', type=str, default=None, help='Dataset location')
     args = parser.parse_args()
     return args
 

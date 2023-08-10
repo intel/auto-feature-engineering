@@ -7,7 +7,7 @@ import argparse
 
 def run(cfg):
     workspace = cfg.workspace
-    dataset_path = os.path.join("/input/fetch_data/output", "dataset_cache.parquet")
+    dataset_path = cfg.input_file
     print(f"Configuration is {cfg}")
 
     if not os.path.exists(os.path.join(workspace, 'EDA')):
@@ -27,6 +27,7 @@ def run(cfg):
 def parse_args():
     parser = argparse.ArgumentParser('AutoFE-Workflow')
     parser.add_argument('--workspace', type=str, default="output", help='AutoFE workspace')
+    parser.add_argument('--input_file', type=str, default=None, help='Dataset location')
     args = parser.parse_args()
     return args
 

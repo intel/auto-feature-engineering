@@ -6,3 +6,5 @@
 * `--target_label`: Target label of dataset
 * `--engine_type`: AutoFE execution engine, options [pandas, spark]
 * `--train`: Set true for training pipeline and false for test pipeline
+* `--input_file`: Dataset location
+* `--pipeline_output`: AutoFE pipeline output dir

@@ -1,5 +1,5 @@
 ---
-title: Fetch Data
+title: AutoFE Fetch Data
 version: 1.0.0
 description:  Fetch Data from url or local fs
 icon: python
@@ -21,4 +21,8 @@ arguments:
   - key: url
     type: 'categorical'
     values:
-      - 'sample.csv'
+      - ''
+  - key: usage
+    type: 'categorical'
+    values:
+      - 'combined'

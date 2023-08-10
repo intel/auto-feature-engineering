@@ -4,3 +4,4 @@
 ## Input Arguments:
 * `--workspace`: AutoFE workspace, eg. `/cnvrg/applications/nyc_taxi_fare/`
 * `--target_label`: Target label of dataset
+* `--input_file`: Dataset location

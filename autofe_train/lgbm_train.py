@@ -14,6 +14,7 @@ pathlib = str(Path(__file__).parent.parent.resolve())
 def run(cfg):
     workspace = cfg.workspace
     target_label = cfg.target_label
+    input_file = cfg.input_file
     print(f"Configuration is {cfg}")
 
     params = {
@@ -42,7 +43,7 @@ def run(cfg):
 
     if str(cfg.train).lower() == 'true':
         print("Train")
-        transformed_data = pd.read_parquet(os.path.join("/input/fittransform_train/output", 'transformed_train_data.parquet'))
+        transformed_data = pd.read_parquet(input_file)
         test_sample = transformed_data.sample(frac = 0.1)
         train_sample = transformed_data.drop(test_sample.index)
 
@@ -55,18 +56,19 @@ def run(cfg):
 
         model = lgbm.train(params=params, train_set=lgbm_train, valid_sets=lgbm_val, verbose_eval=100)
         model.save_model(os.path.join(workspace, 'lgbm_model'))
+        shutil.copy(input_file, os.path.join(workspace, 'transformed_train_data.parquet'))
     else:
-        transformed_data = pd.read_parquet(os.path.join("/input/transform_test/output", 'transformed_test_data.parquet'))
+        transformed_data = pd.read_parquet(input_file)
         x_val = transformed_data.drop(columns=[target_label])
         y_val = transformed_data[target_label].values
         lgbm_val = lgbm.Dataset(x_val, y_val, silent=False)
-        model = lgbm.Booster(model_file=os.path.join("/input/train_model/output", 'lgbm_model'))
+        model = lgbm.Booster(model_file=os.path.join(workspace, 'lgbm_model'))
         pred = model.predict(x_val)
         rmse = np.sqrt(mean_squared_error(y_val, pred))
         print('Test dataset RMSE', rmse)
-        shutil.copy(os.path.join("/input/fittransform_train/output", 'transformed_train_data.parquet'), os.path.join(workspace, 'transformed_train_data.parquet'))
-        shutil.copy(os.path.join("/input/transform_test/output", 'transformed_test_data.parquet'), os.path.join(workspace, 'transformed_test_data.parquet'))
-        shutil.copy(os.path.join("/input/autofe_create_pipeline/output", 'EDA', 'pipeline.json'), os.path.join(workspace, 'pipeline.json'))
+        
+        shutil.copy(input_file, os.path.join(workspace, 'transformed_test_data.parquet'))
+        shutil.copy(os.path.join(cfg.pipeline_output, 'EDA', 'pipeline.json'), os.path.join(workspace, 'pipeline.json'))
 
         print("To obtain transformed data and feature engineering pipeline, please go to Files -> output.")
 
@@ -76,6 +78,8 @@ def parse_args():
     parser.add_argument('--workspace', type=str, default="output", help='AutoFE workspace')
     parser.add_argument('--target_label', type=str, default="fare_amount", help='Dataset target label')
     parser.add_argument('--train', type=str, default='False', help='Train/Test flag')
+    parser.add_argument('--input_file', type=str, default=None, help='Dataset location')
+    parser.add_argument('--pipeline_output', type=str, default=None, help='AutoFE pipeline output dir')
     args = parser.parse_args()
     return args
 

@@ -1,5 +1,5 @@
 ---
-title: Transform
+title: AutoFE Transform
 version: 1.0.0
 description:  Data transformation
 icon: python
@@ -25,8 +25,20 @@ arguments:
   - key: target_label
     type: 'categorical'
     values:
-      - 'fare_amount'
+      - ''
   - key: engine_type
     type: 'categorical'
     values:
       - 'pandas'
+  - key: train
+    type: 'categorical'
+    values:
+      - 'True'
+  - key: input_file
+    type: 'categorical'
+    values:
+      - ''
+  - key: pipeline_output
+    type: 'categorical'
+    values:
+      - ''

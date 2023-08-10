@@ -20,7 +20,7 @@ tasks:
     type: exec
 
     # The library data
-    library: fetch-data
+    library: autofe-fetch-data
     library_version: 1.0.0
 
     requirements:
@@ -37,6 +37,10 @@ tasks:
         type: 'categorical'
         values:
         - sample.csv
+      - key: usage
+        type: 'categorical'
+        values:
+        - 'combined'
 
   - title: Data Split
     top: 126
@@ -46,7 +50,7 @@ tasks:
     type: exec
 
     # The library data
-    library: data-split
+    library: autofe-data-split
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -64,10 +68,14 @@ tasks:
     # The "arguments" property changes to "params", rest remains the same.
     # Params in the blueprint yaml can be used to override the arguments in the library.
     params:
-      - key: 'workspace'
+      - key: workspace
         type: 'categorical'
         values:
           - 'output'
+      - key: input_file
+        type: 'categorical'
+        values:
+          - '/input/fetch_data/output/dataset.parquet'
 
   - title: Gen Pipeline
     top: 126
@@ -77,7 +85,7 @@ tasks:
     type: exec
 
     # The library data
-    library: gen-pipeline
+    library: autofe-gen-pipeline
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -103,6 +111,10 @@ tasks:
         type: 'categorical'
         values:
           - 'fare_amount'
+      - key: input_file
+        type: 'categorical'
+        values:
+          - '/input/train_test_split/output/train_sample.parquet'
 
   - title: Fit Transform Train
     top: 28
@@ -112,7 +124,7 @@ tasks:
     type: exec
 
     # The library data
-    library: transform
+    library: autofe-transform
     library_version: 1.0.0
     # The flattened library parameters (in this case we have training library)
     command: python3 data_transform.py
@@ -145,6 +157,14 @@ tasks:
         type: 'categorical'
         values:
           - 'True'
+      - key: input_file
+        type: 'categorical'
+        values:
+          - '/input/train_test_split/output/train_sample.parquet'
+      - key: pipeline_output
+        type: 'categorical'
+        values:
+          - '/input/gen_pipeline/output'
                     
   - title: Transform Test
     top: 226
@@ -154,7 +174,7 @@ tasks:
     type: exec
 
     # The library data
-    library: transform
+    library: autofe-transform
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -188,6 +208,14 @@ tasks:
         type: 'categorical'
         values:
           - 'False'
+      - key: input_file
+        type: 'categorical'
+        values:
+          - '/input/train_test_split/output/test_sample.parquet'
+      - key: pipeline_output
+        type: 'categorical'
+        values:
+          - '/input/gen_pipeline/output'
 
   - title: Train Model
     top: 28
@@ -197,7 +225,7 @@ tasks:
     type: exec
 
     # The library data
-    library: train
+    library: autofe-train
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -227,6 +255,14 @@ tasks:
         type: 'categorical'
         values:
           - 'True'
+      - key: input_file
+        type: 'categorical'
+        values:
+          - '/input/fit_transform_train/output/transformed_train_data.parquet'
+      - key: pipeline_output
+        type: 'categorical'
+        values:
+          - '/input/gen_pipeline/output'
 
   - title: Test
     top: 227
@@ -236,7 +272,7 @@ tasks:
     type: exec
 
     # The library data
-    library: train
+    library: autofe-train
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -266,6 +302,14 @@ tasks:
         type: 'categorical'
         values:
           - 'False'
+      - key: input_file
+        type: 'categorical'
+        values:
+          - '/input/transform_test/output/transformed_test_data.parquet'
+      - key: pipeline_output
+        type: 'categorical'
+        values:
+          - '/input/gen_pipeline/output'
 
 relations:
 - from: Fetch Data

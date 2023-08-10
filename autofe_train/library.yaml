@@ -1,5 +1,5 @@
 ---
-title: Train
+title: AutoFE Train
 version: 1.0.0
 description:  Train lightGBM with tranformed dataset
 icon: python
@@ -25,4 +25,16 @@ arguments:
   - key: target_label
     type: 'categorical'
     values:
-      - 'fare_amount'
+      - ''
+  - key: train
+    type: 'categorical'
+    values:
+      - 'True'
+  - key: input_file
+    type: 'categorical'
+    values:
+      - ''
+  - key: pipeline_output
+    type: 'categorical'
+    values:
+      - ''

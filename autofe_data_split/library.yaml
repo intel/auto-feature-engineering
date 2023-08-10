@@ -1,5 +1,5 @@
 ---
-title: Data Split
+title: AutoFE Data Split
 version: 1.0.0
 description:  Split dataset for train and test dataset
 icon: python
@@ -18,7 +18,11 @@ image: aiops/autofe:pa
 language: python3
 
 arguments:
-  - key: 'workspace'
+  - key: workspace
     type: 'categorical'
     values:
       - 'output'
+  - key: input_file
+    type: 'categorical'
+    values:
+      - ''
