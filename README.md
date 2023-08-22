@@ -312,7 +312,7 @@ autofe_notebook_UI  | [I 2023-05-15 15:48:10.346 ServerApp] Use Control-C to sto
 | [IBM Card Transaction Fraud Detect](applications/fraud_detect/interactive_notebook.ipynb) | Recognize fraudulent credit card transactions |
 | [Twitter Recsys](applications/twitter_recsys/interactive_notebook.ipynb) | Real-world task of tweet engagement prediction |
 | [Outbrain](applications/outbrain_ctr/interactive_notebook.ipynb) | Click prediction for recommendation system |
-| [CDP Tabular Utils](applications/cdp_tabular_utils/interactive_notebook.ipynb) | integration example with CDP Tabular Utils |
+| [Covid19 TabUtils](applications/covid19_tabutils/interactive_notebook.ipynb) | integration example with Tabular Utils |
 | [PredictiveAssetsMaintenance](applications/predictive_assets_maintenance/interactive_notebook.ipynb) | integration example with predictive assets maintenance use case |
 
 ## How to Customize this Workflow
