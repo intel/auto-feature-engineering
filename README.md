@@ -1,17 +1,18 @@
 # Auto Feature Engineering Workflow
 
 ## Introduction
-Auto Feature Engineering helps to shorten the time required for data scientists to process and transfomr large-scale raw tabular dataset to ready-to-train features, reducing the necessity of human domain-specific knowlege to explore and identify new useful features, and thus enabling data scientists to be able to focus and iterate on the rest stages of the E2E AI pipelines more efficiently. 
+Auto Feature Engineering helps to shorten the time required for data scientists to process and transform large-scale raw tabular datasets to ready-to-train features, reducing the necessity of human domain-specific knowledge to explore and identify new useful features, and thus enabling data scientists to be able to focus and iterate on the rest stages of the E2E AI pipelines more efficiently. 
 
-The workflow leverages [Intel Auto-Feature-Engineering toolkit (codename: RecDP)](https://github.com/intel-innersource/frameworks.bigdata.AIDK/tree/RecDP_v2.0/RecDP) to automatically transform raw tabular data to enriched usefull new features on pluggable exuection engine such as Pandas and Spark, with the capability of integrating 3rd party feature engineering primitives, and thus significantly improve developer productivity and efficiency.
+The workflow leverages [Intel Auto-Feature-Engineering toolkit (codename: RecDP)](https://github.com/intel/e2eAIOK/tree/main/RecDP) to automatically transform raw tabular data to enriched useful new features on pluggable execution engine such as Pandas and Spark, with the capability of integrating 3rd party feature engineering primitives, and thus significantly improve developer productivity and efficiency.
+
 
 Check out more workflow examples in the [Developer Catalog](https://developer.intel.com/aireferenceimplementations).
 
 ## Solution Technical Overview
 
-Auto feature engineering targets to simplify Feature engineering process with enhanced performance via parallel data processing frameworks, automated data processing pipeline and built-in domain-specific feature engineering primitives. This repository provides an end-to-end workflow that automatically analyzes the data based on data type, profiles feature distribution, generates customizable feature engineering pipelines for the data preparation and execute the pipeline parallelly with different backend engines on Intel platform.
+Auto feature engineering targets to simplify Feature engineering process with enhanced performance via parallel data processing frameworks, automated data processing pipeline and built-in domain-specific feature engineering primitives. This repository provides an end-to-end workflow that automatically analyzes the data based on data type, profiles feature distribution, generates customizable feature engineering pipelines for the data preparation and executes the pipeline parallelly with different backend engines on Intel platform.
 
-This workflows leveraged the RecDP toolkits from [Intel® End-to-End AI Optimization kit](https://github.com/intel/e2eAIOK) and the features can be used by both ML and DL models. 
+This workflow leverages the RecDP toolkits from [Intel® End-to-End AI Optimization kit](https://github.com/intel/e2eAIOK) and the features can be used by both ML and DL models. 
 
 ## Solution Technical Details
 
@@ -364,7 +365,7 @@ AutoFE workflows significantly simplifies the complexity of feature engineering 
 
 ## Learn More
 For more information about or to read about other relevant workflow examples, see these guides and software resources:
-* [RecDP toolkit](https://github.com/intel-innersource/frameworks.bigdata.AIDK/tree/RecDP_v2.0/RecDP)
+* [RecDP toolkit](https://github.com/intel/e2eAIOK/tree/main/RecDP)
 * [Intel® End-to-End AI Optimization kit](https://github.com/intel/e2eAIOK)
 * [Intel® AI Analytics Toolkit (AI Kit)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ai-analytics-toolkit.html)
 

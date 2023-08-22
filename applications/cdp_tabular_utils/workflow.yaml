@@ -1,3 +1,0 @@
-dataset_path: ./raw_data/Covid_19_ICU_prediction.csv
-target_label: ICU
-engine_type: pandas
