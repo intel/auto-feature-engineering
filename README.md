@@ -368,6 +368,7 @@ For more information about or to read about other relevant workflow examples, se
 * [RecDP toolkit](https://github.com/intel/e2eAIOK/tree/main/RecDP)
 * [Intel® End-to-End AI Optimization kit](https://github.com/intel/e2eAIOK)
 * [Intel® AI Analytics Toolkit (AI Kit)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ai-analytics-toolkit.html)
+* [Enhance Productivity with Auto Feature Engineering Workflow from Intel](https://www.intel.com/content/www/us/en/developer/articles/technical/productivity-auto-feature-engineering-workflow.html)
 
 ## Support
 If you have questions or issues about this workflow, contact the [Support Team](support_forum_link).
